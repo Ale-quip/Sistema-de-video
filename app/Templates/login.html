@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Iniciar sesión</h1>
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label for="email">Correo electrónico:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="button">Iniciar sesión</button>
+            <a href="{{ url_for('recuperar_password') }}" class="forgot-password">¿Olvidó su contraseña?</a>
+        </form>
+        <p>¿No tiene una cuenta? <a href="{{ url_for('register') }}">Regístrese</a></p>
+    </div>
+</body>
+</html>

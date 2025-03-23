@@ -1,0 +1,76 @@
+2025-03-23 02:18:35,112 - app - ERROR - Error al crear las tablas: (pyodbc.InterfaceError) ('28000', '[28000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Login failed for user \'Alejandro\\alequ\'. (18456) (SQLDriverConnect); [28000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Cannot open database "InveingSistemaVideoDB" requested by the login. The login failed. (4060); [28000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Login failed for user \'Alejandro\\alequ\'. (18456); [28000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Cannot open database "InveingSistemaVideoDB" requested by the login. The login failed. (4060)')
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+2025-03-23 02:18:35,865 - app - ERROR - Error al crear las tablas: (pyodbc.InterfaceError) ('28000', '[28000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Login failed for user \'Alejandro\\alequ\'. (18456) (SQLDriverConnect); [28000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Cannot open database "InveingSistemaVideoDB" requested by the login. The login failed. (4060); [28000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Login failed for user \'Alejandro\\alequ\'. (18456); [28000] [Microsoft][ODBC Driver 17 for SQL Server][SQL Server]Cannot open database "InveingSistemaVideoDB" requested by the login. The login failed. (4060)')
+(Background on this error at: https://sqlalche.me/e/20/rvf5)
+2025-03-23 02:19:01,459 - app - ERROR - Error al crear las tablas: Could not initialize target column for ForeignKey 'Clientes.id' on table 'Ventas': table 'Clientes' has no column named 'id'
+2025-03-23 02:19:02,234 - app - ERROR - Error al crear las tablas: Could not initialize target column for ForeignKey 'Clientes.id' on table 'Ventas': table 'Clientes' has no column named 'id'
+2025-03-23 02:20:40,636 - app - ERROR - Error al crear las tablas: Could not initialize target column for ForeignKey 'Clientes.id' on table 'Ventas': table 'Clientes' has no column named 'id'
+2025-03-23 02:20:41,459 - app - ERROR - Error al crear las tablas: Could not initialize target column for ForeignKey 'Clientes.id' on table 'Ventas': table 'Clientes' has no column named 'id'
+2025-03-23 02:23:40,851 - app - ERROR - Error al crear las tablas: Could not initialize target column for ForeignKey 'Clientes.id' on table 'Ventas': table 'Clientes' has no column named 'id'
+2025-03-23 02:23:41,629 - app - ERROR - Error al crear las tablas: Could not initialize target column for ForeignKey 'Clientes.id' on table 'Ventas': table 'Clientes' has no column named 'id'
+2025-03-23 02:24:56,390 - app - ERROR - Error al crear las tablas: Could not initialize target column for ForeignKey 'Clientes.id' on table 'Ventas': table 'Clientes' has no column named 'id'
+2025-03-23 02:25:05,057 - app - ERROR - Error al crear las tablas: Could not initialize target column for ForeignKey 'Clientes.id' on table 'Ventas': table 'Clientes' has no column named 'id'
+2025-03-23 02:25:06,031 - app - ERROR - Error al crear las tablas: Could not initialize target column for ForeignKey 'Clientes.id' on table 'Ventas': table 'Clientes' has no column named 'id'
+2025-03-23 02:27:45,802 - app - ERROR - Error al crear las tablas: Could not initialize target column for ForeignKey 'Clientes.id' on table 'Ventas': table 'Clientes' has no column named 'id'
+2025-03-23 02:27:46,610 - app - ERROR - Error al crear las tablas: Could not initialize target column for ForeignKey 'Clientes.id' on table 'Ventas': table 'Clientes' has no column named 'id'
+2025-03-23 02:34:42,306 - app - DEBUG - Intento de registro con email: ale.quiros.palma@gmail.com, nombre: Alejandro, método de hash: pbkdf2:sha256
+2025-03-23 02:34:42,327 - app - INFO - Nuevo cliente registrado: ale.quiros.palma@gmail.com, nombre: Alejandro
+2025-03-23 02:34:55,254 - app - DEBUG - Intento de inicio de sesión con email: ale.quiros.palma@gmail.com
+2025-03-23 02:34:56,022 - app - INFO - Inicio de sesión exitoso para el cliente: ale.quiros.palma@gmail.com
+2025-03-23 13:32:59,478 - app - DEBUG - Intento de registro de admin con email: ale.admin@gmail.com, nombre: AlejandroAdmin, método de hash: pbkdf2:sha256
+2025-03-23 13:32:59,512 - app - INFO - Nuevo administrador registrado: ale.admin@gmail.com, nombre: AlejandroAdmin
+2025-03-23 13:33:23,628 - app - DEBUG - Intento de inicio de sesión con email: ale.admin@gmail.com
+2025-03-23 13:33:24,515 - app - WARNING - Inicio de sesión fallido para el cliente: ale.admin@gmail.com
+2025-03-23 13:33:36,047 - app - DEBUG - Intento de inicio de sesión con email: ale.admin@gmail.com
+2025-03-23 13:33:36,779 - app - INFO - Inicio de sesión exitoso para el cliente: ale.admin@gmail.com
+2025-03-23 13:55:38,352 - app - DEBUG - Intento de inicio de sesión con email: ale.admin@gmail.com
+2025-03-23 13:55:38,355 - app - WARNING - Inicio de sesión fallido para el cliente: ale.admin@gmail.com
+2025-03-23 13:55:52,777 - app - DEBUG - Intento de inicio de sesión con email: ale.admin@gmail.com
+2025-03-23 13:55:52,787 - app - WARNING - Inicio de sesión fallido para el cliente: ale.admin@gmail.com
+2025-03-23 13:56:03,764 - app - DEBUG - Intento de inicio de sesión con email: ale.admin@gmail.com
+2025-03-23 13:56:03,766 - app - WARNING - Inicio de sesión fallido para el cliente: ale.admin@gmail.com
+2025-03-23 13:56:34,067 - app - DEBUG - Intento de inicio de sesión con email: ale.admin@gmail.com
+2025-03-23 13:56:34,068 - app - WARNING - Inicio de sesión fallido para el cliente: ale.admin@gmail.com
+2025-03-23 14:15:41,203 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 14:15:41,983 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 14:18:56,288 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 14:18:57,028 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 14:21:32,120 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 14:21:32,857 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 14:23:30,981 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 14:23:31,731 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 14:24:57,850 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 14:24:58,597 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 14:31:21,383 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 14:31:22,144 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 14:35:42,295 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 14:35:43,021 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 14:38:16,218 - app - DEBUG - Agregar película: Rey Leon 3, Actores: Al Pacino, Michelle Pfeiffer, Steven Bauer
+2025-03-23 14:38:16,224 - app - INFO - Película agregada: Rey Leon 3, Actores: Al Pacino, Michelle Pfeiffer, Steven Bauer
+2025-03-23 14:38:44,865 - app - DEBUG - Editar película ID: 1, Nombre: Caracortada, Actores: Al Pacino, Michelle Pfeiffer, Steven Bauer
+2025-03-23 14:38:44,876 - app - INFO - Película editada ID: 1, Nombre: Caracortada, Actores: Al Pacino, Michelle Pfeiffer, Steven Bauer
+2025-03-23 14:39:37,648 - app - DEBUG - Intento de registro con email: User.example@gmail.com, nombre: User, método de hash: pbkdf2:sha256
+2025-03-23 14:39:37,665 - app - INFO - Nuevo cliente registrado: User.example@gmail.com, nombre: User
+2025-03-23 14:39:45,184 - app - DEBUG - Intento de inicio de sesión con email: User.example@gmail.com
+2025-03-23 14:39:45,949 - app - INFO - Inicio de sesión exitoso para el cliente: User.example@gmail.com
+2025-03-23 14:39:50,449 - app - DEBUG - Agregar película 1 al carrito del cliente User con cantidad 1
+2025-03-23 14:39:50,453 - app - INFO - Película Caracortada agregada al carrito del cliente User
+2025-03-23 14:39:54,302 - app - DEBUG - Finalizar compra para el cliente User
+2025-03-23 14:39:54,325 - app - INFO - Compra finalizada con éxito para el cliente User
+2025-03-23 14:40:34,694 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 14:40:35,425 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 14:46:21,718 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 14:46:22,535 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 14:50:55,299 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 14:50:56,035 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 14:53:30,009 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 14:53:30,743 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 14:57:51,901 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 14:57:52,659 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 14:57:52,685 - app - DEBUG - Venta: ('2025-03-23', 1)
+2025-03-23 15:05:57,880 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 15:05:58,648 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 15:05:58,677 - app - DEBUG - Venta: ('2025-03-23', 1)
+2025-03-23 15:38:22,621 - app - DEBUG - Intento de inicio de sesión con email: admin@example.com
+2025-03-23 15:38:23,380 - app - INFO - Inicio de sesión exitoso para el cliente: admin@example.com
+2025-03-23 15:38:23,408 - app - DEBUG - Venta: ('2025-03-23', 1)

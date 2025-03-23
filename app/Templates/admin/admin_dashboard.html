@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard de Administrador</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Dashboard de Administrador</h1>
+        <nav>
+            <a href="#peliculas" class="button" onclick="showTab('peliculas')">Manejo de Películas</a>
+            <a href="#usuarios" class="button" onclick="showTab('usuarios')">Manejo de Usuarios</a>
+        </nav>
+
+        <section id="peliculas" class="tab-content">
+            <h2>Mantenimiento de Películas</h2>
+            <h3>Agregar nueva película</h3>
+            <form method="POST" action="{{ url_for('admin_dashboard') }}">
+                <input type="hidden" name="accion" value="agregar_pelicula">
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="actores">Actores:</label>
+                    <input type="text" id="actores" name="actores" required>
+                </div>
+                <button type="submit" class="button">Agregar</button>
+            </form>
+
+            <h3>Lista de películas</h3>
+            <ul class="movie-list">
+                {% for pelicula in peliculas %}
+                <li>
+                    <form method="POST" action="{{ url_for('admin_dashboard') }}">
+                        <input type="hidden" name="accion" value="editar_pelicula">
+                        <input type="hidden" name="id_pelicula" value="{{ pelicula.id_pelicula }}">
+                        <div class="form-group">
+                            <label for="nombre">Nombre:</label>
+                            <input type="text" id="nombre" name="nombre" value="{{ pelicula.nombre }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="actores">Actores:</label>
+                            <input type="text" id="actores" name="actores" value="{{ pelicula.actores }}" required>
+                        </div>
+                        <button type="submit" class="button">Editar</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin_dashboard') }}">
+                        <input type="hidden" name="accion" value="eliminar_pelicula">
+                        <input type="hidden" name="id_pelicula" value="{{ pelicula.id_pelicula }}">
+                        <button type="submit" class="button delete-button">Eliminar</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+
+            <h3>Gráficos de Ventas</h3>
+            <canvas id="ventasChart"></canvas>
+            <script>
+                var ctx = document.getElementById('ventasChart').getContext('2d');
+                var ventasChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: { labels,tojson },
+                        datasets: [{
+                            label: 'Ventas de Películas',
+                            data: { data,tojson },
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            </script>
+        </section>
+
+        <section id="usuarios" class="tab-content" style="display:none;">
+            <h2>Mantenimiento de Usuarios</h2>
+            <h3>Lista de usuarios</h3>
+            <ul class="user-list">
+                {% for cliente in clientes %}
+                <li>
+                    <form method="POST" action="{{ url_for('admin_dashboard') }}">
+                        <input type="hidden" name="accion" value="editar_usuario">
+                        <input type="hidden" name="id_cliente" value="{{ cliente.id_cliente }}">
+                        <div class="form-group">
+                            <label for="nombre">Nombre:</label>
+                            <input type="text" id="nombre" name="nombre" value="{{ cliente.nombre }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Correo electrónico:</label>
+                            <input type="email" id="email" name="email" value="{{ cliente.email }}" required>
+                        </div>
+                        <button type="submit" class="button">Editar</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('admin_dashboard') }}">
+                        <input type="hidden" name="accion" value="eliminar_usuario">
+                        <input type="hidden" name="id_cliente" value="{{ cliente.id_cliente }}">
+                        <button type="submit" class="button delete-button">Eliminar</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            var tabs = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].style.display = 'none';
+            }
+            document.getElementById(tabId).style.display = 'block';
+        }
+    </script>
+</body>
+</html>

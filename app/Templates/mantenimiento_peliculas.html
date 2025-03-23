@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mantenimiento de Películas</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Mantenimiento de Películas</h1>
+        <h2>Agregar nueva película</h2>
+        <form method="POST" action="{{ url_for('mantenimiento_peliculas') }}">
+            <input type="hidden" name="agregar">
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="actores">Actores:</label>
+                <input type="text" id="actores" name="actores" required>
+            </div>
+            <button type="submit" class="button">Agregar</button>
+        </form>
+
+        <h2>Lista de películas</h2>
+        <ul class="movie-list">
+            {% for pelicula in peliculas %}
+            <li>
+                <form method="POST" action="{{ url_for('mantenimiento_peliculas') }}">
+                    <input type="hidden" name="editar">
+                    <input type="hidden" name="id_pelicula" value="{{ pelicula.id_pelicula }}">
+                    <div class="form-group">
+                        <label for="nombre">Nombre:</label>
+                        <input type="text" id="nombre" name="nombre" value="{{ pelicula.nombre }}" required>
+                    </div>
+                    <div class="form-group">
+                         <label for="actores">Actores:</label>
+                        <input type="text" id="actores" name="actores" value="{{ pelicula.actores }}" required>
+                    </div>
+                    <button type="submit" class="button">Editar</button>
+                </form>
+                <form method="POST" action="{{ url_for('mantenimiento_peliculas') }}">
+                    <input type="hidden" name="eliminar">
+                    <input type="hidden" name="id_pelicula" value="{{ pelicula.id_pelicula }}">
+                    <button type="submit" class="button delete-button">Eliminar</button>
+                </form>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

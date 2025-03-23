@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buscar Películas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Resultados de la búsqueda</h1>
+        <p>Resultados para: {{ query }}</p>
+        <ul class="movie-list">
+            {% for pelicula in peliculas %}
+            <li>
+                <h3>{{ pelicula.nombre }}</h3>
+                <p>Actores: {{ pelicula.actores }}</p>
+                 <form action="{{ url_for('carrito_de_compra') }}" method="POST">
+                    <input type="hidden" name="pelicula_id" value="{{ pelicula.id_pelicula }}">
+                    <label for="cantidad">Cantidad:</label>
+                    <input type="number" id="cantidad" name="cantidad" value="1" min="1" class="cantidad-input">
+                    <button type="submit" class="button">Agregar al carrito</button>
+                </form>
+            </li>
+            {% else %}
+            <li>No se encontraron películas.</li>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('menu_principal') }}" class="button">Volver al menú principal</a>
+    </div>
+</body>
+</html>
