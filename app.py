@@ -5,16 +5,32 @@ import pyodbc
 from werkzeug.security import generate_password_hash, check_password_hash
 import secrets
 from datetime import datetime
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer
+from dotenv import load_dotenv
+
+
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
+
+mail = Mail(app)
 
 # Configuración de SQL Server
 conn_str = (
     "Driver={SQL Server};"
     "Server=localhost;"
     "Database=SistemaVideoDB;"
-    "Trusted_Connection=yes;"  # Para Windows Authentication
+    "Trusted_Connection=yes;"  
 )
 
 # Inicializar Flask-Login
@@ -107,6 +123,18 @@ def setup_database():
     conn.commit()
     conn.close()
 
+def generate_token(email):
+    serializer = URLSafeTimedSerializer(app.secret_key)
+    return serializer.dumps(email, salt='password-reset-salt')
+
+def verify_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.secret_key)
+    try:
+        email = serializer.loads(token, salt='password-reset-salt', max_age=expiration)
+    except:
+        return False
+    return email
+
 # Rutas de la aplicación
 @app.route('/')
 def index():
@@ -177,14 +205,72 @@ def recuperar_password():
         conn.close()
         
         if user:
-            # Aquí normalmente enviarías un email con un enlace para restablecer la contraseña
-            # Por simplicidad, solo mostraremos un mensaje
-            flash('Se ha enviado un enlace de recuperación a tu correo electrónico', 'success')
+            token = generate_token(email)
+            reset_url = url_for('reset_password', token=token, _external=True)
+            
+            # Modificar la creación del mensaje
+            subject = 'Recuperación de Contraseña - Sistema de Video'
+            
+            # Crear el mensaje con el remitente configurado en la aplicación
+            msg = Message(
+                subject=subject,
+                recipients=[email]
+            )
+            
+            msg.body = f'''Para restablecer tu contraseña, visita el siguiente enlace:
+{reset_url}
+
+Si no solicitaste un restablecimiento de contraseña, ignora este correo.
+
+Este enlace expirará en 1 hora.
+'''
+            msg.html = f'''
+<p>Para restablecer tu contraseña, haz clic en el siguiente enlace:</p>
+<p><a href="{reset_url}">Restablecer Contraseña</a></p>
+<p>Si no solicitaste un restablecimiento de contraseña, ignora este correo.</p>
+<p>Este enlace expirará en 1 hora.</p>
+'''
+            
+            try:
+                mail.send(msg)
+                flash('Se ha enviado un enlace de recuperación a tu correo electrónico', 'success')
+            except Exception as e:
+                print(f"Error al enviar correo: {str(e)}")
+                flash('Error al enviar el correo de recuperación. Por favor, intenta más tarde.', 'danger')
+            
             return redirect(url_for('login'))
         else:
             flash('No se encontró ninguna cuenta con ese correo electrónico', 'danger')
     
     return render_template('recuperar_password.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    email = verify_token(token)
+    if not email:
+        flash('El enlace de recuperación es inválido o ha expirado', 'danger')
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        
+        if password != confirm_password:
+            flash('Las contraseñas no coinciden', 'danger')
+            return redirect(url_for('reset_password', token=token))
+        
+        hashed_password = generate_password_hash(password)
+        
+        conn = pyodbc.connect(conn_str)
+        cursor = conn.cursor()
+        cursor.execute("UPDATE usuarios SET password = ? WHERE email = ?", hashed_password, email)
+        conn.commit()
+        conn.close()
+        
+        flash('Tu contraseña ha sido actualizada', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('reset_password.html')
 
 # Ruta de catálogo de películas
 @app.route('/catalogo')
