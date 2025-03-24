@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Carrito de Compras - Sistema de Video{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-shopping-cart me-2"></i>Carrito de Compras</h2>
+
+{% if carrito %}
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Película</th>
+                        <th class="text-end">Precio</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in carrito %}
+                    <tr>
+                        <td>{{ item.titulo }}</td>
+                        <td class="text-end">${{ "%.2f"|format(item.precio) }}</td>
+                        <td class="text-center">
+                            <a href="{{ url_for('eliminar_carrito', index=loop.index0) }}" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="table-primary">
+                        <th>Total</th>
+                        <th class="text-end">${{ "%.2f"|format(total) }}</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer bg-transparent d-flex justify-content-between">
+        <a href="{{ url_for('catalogo') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Seguir comprando
+        </a>
+        <a href="{{ url_for('comprar') }}" class="btn btn-success">
+            <i class="fas fa-check me-2"></i>Finalizar compra
+        </a>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <i class="fas fa-info-circle me-2"></i>Tu carrito está vacío.
+</div>
+<div class="text-center mt-4">
+    <a href="{{ url_for('catalogo') }}" class="btn btn-primary">
+        <i class="fas fa-film me-2"></i>Ir al catálogo
+    </a>
+</div>
+{% endif %}
+{% endblock %}

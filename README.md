@@ -1,2 +1,2 @@
 # Sistema-de-video
-sistema para comprar películas
+Sistema para la compra y gestión de películas.
