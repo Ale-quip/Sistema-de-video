@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
-{% block title %}Catálogo de Libros - Biblioteca{% endblock %}
+{% block title %}Catálogo de Películas - Sistema de Video{% endblock %}
 
 {% block content %}
-<h2 class="mb-4"><i class="fas fa-book me-2"></i>Catálogo de Libros</h2>
+<h2 class="mb-4"><i class="fas fa-film me-2"></i>Catálogo de Películas</h2>
 
 <div class="row mb-4">
     <div class="col-md-6">
         <form action="{{ url_for('catalogo') }}" method="get" class="d-flex">
             <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Buscar por título o autor..." value="{{ search }}">
+                <input type="text" name="search" class="form-control" placeholder="Buscar por título o actores..." value="{{ search }}">
                 <button class="btn btn-primary" type="submit">
                     <i class="fas fa-search"></i>
                 </button>
@@ -18,28 +18,24 @@
     </div>
 </div>
 
-{% if libros %}
+{% if peliculas %}
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-    {% for libro in libros %}
+    {% for pelicula in peliculas %}
     <div class="col">
-        <div class="card h-100 book-card">
-            {% if libro.imagen_url %}
-            <img src="{{ libro.imagen_url }}" class="card-img-top" alt="{{ libro.titulo }}">
+        <div class="card h-100 movie-card">
+            {% if pelicula.imagen_url %}
+            <img src="{{ pelicula.imagen_url }}" class="card-img-top" alt="{{ pelicula.titulo }}">
             {% else %}
             <img src="https://via.placeholder.com/300x450?text=Sin+Imagen" class="card-img-top" alt="Sin imagen">
             {% endif %}
             <div class="card-body">
-                <h5 class="card-title">{{ libro.titulo }}</h5>
-                <p class="card-text text-truncate">{{ libro.descripcion }}</p>
-                <p class="card-text"><small class="text-muted">
-                    <i class="fas fa-user me-1"></i>{{ libro.autor }}<br>
-                    <i class="fas fa-bookmark me-1"></i>{{ libro.genero }}<br>
-                    <i class="fas fa-calendar me-1"></i>{{ libro.anio_publicacion }}
-                </small></p>
-                <p class="card-text"><strong>Precio: ${{ libro.precio }}</strong></p>
+                <h5 class="card-title">{{ pelicula.titulo }}</h5>
+                <p class="card-text text-truncate">{{ pelicula.descripcion }}</p>
+                <p class="card-text"><small class="text-muted">{{ pelicula.genero }} ({{ pelicula.anio }})</small></p>
+                <p class="card-text"><strong>Precio: ${{ pelicula.precio }}</strong></p>
             </div>
             <div class="card-footer bg-transparent border-top-0">
-                <a href="{{ url_for('agregar_carrito', libro_id=libro.id) }}" class="btn btn-primary w-100">
+                <a href="{{ url_for('agregar_carrito', pelicula_id=pelicula.id) }}" class="btn btn-primary w-100">
                     <i class="fas fa-cart-plus me-2"></i>Añadir al carrito
                 </a>
             </div>
@@ -49,7 +45,7 @@
 </div>
 {% else %}
 <div class="alert alert-info">
-    <i class="fas fa-info-circle me-2"></i>No se encontraron libros{% if search %} para "{{ search }}"{% endif %}.
+    <i class="fas fa-info-circle me-2"></i>No se encontraron películas{% if search %} para "{{ search }}"{% endif %}.
 </div>
 {% endif %}
 {% endblock %}

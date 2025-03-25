@@ -29,7 +29,7 @@ mail = Mail(app)
 conn_str = (
     "Driver={SQL Server};"
     "Server=localhost;"
-    "Database=BibliotecaDB;"
+    "Database=SistemaVideoDB;"
     "Trusted_Connection=yes;"  
 )
 
@@ -76,18 +76,18 @@ def setup_database():
     )
     ''')
     
-    # Crear tabla de libros
+    # Crear tabla de películas
     cursor.execute('''
-    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='libros' AND xtype='U')
-    CREATE TABLE libros (
+    IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='peliculas' AND xtype='U')
+    CREATE TABLE peliculas (
         id INT PRIMARY KEY IDENTITY(1,1),
         titulo VARCHAR(100) NOT NULL,
         descripcion TEXT,
-        autor VARCHAR(255),
+        actores VARCHAR(255),
         genero VARCHAR(50),
-        anio_publicacion INT,
+        anio INT,
         precio DECIMAL(10, 2) NOT NULL,
-        imagen_url VARCHAR(500)
+        imagen_url VARCHAR(255)
     )
     ''')
     
@@ -109,10 +109,10 @@ def setup_database():
     CREATE TABLE detalle_ventas (
         id INT PRIMARY KEY IDENTITY(1,1),
         venta_id INT NOT NULL,
-        libro_id INT NOT NULL,
+        pelicula_id INT NOT NULL,
         precio DECIMAL(10, 2) NOT NULL,
         FOREIGN KEY (venta_id) REFERENCES ventas(id),
-        FOREIGN KEY (libro_id) REFERENCES libros(id)
+        FOREIGN KEY (pelicula_id) REFERENCES peliculas(id)
     )
     ''')
     
@@ -209,7 +209,7 @@ def recuperar_password():
             reset_url = url_for('reset_password', token=token, _external=True)
             
             # Modificar la creación del mensaje
-            subject = 'Recuperación de Contraseña - Sistema de Libros'
+            subject = 'Recuperación de Contraseña - Sistema de Video'
             
             # Crear el mensaje con el remitente configurado en la aplicación
             msg = Message(
@@ -272,39 +272,54 @@ def reset_password(token):
     
     return render_template('reset_password.html')
 
-# Ruta de catálogo de libros
+# Ruta de catálogo de películas
 @app.route('/catalogo')
 @login_required
 def catalogo():
+    search = request.args.get('search', '')
+    
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM libros ORDER BY titulo")
-    libros = cursor.fetchall()
+    
+    if search:
+        cursor.execute("SELECT * FROM peliculas WHERE titulo LIKE ? OR actores LIKE ?", 
+                      f'%{search}%', f'%{search}%')
+    else:
+        cursor.execute("SELECT * FROM peliculas")
+    
+    peliculas = cursor.fetchall()
     conn.close()
-    return render_template('catalogo.html', libros=libros)
+    
+    return render_template('catalogo.html', peliculas=peliculas, search=search)
 
 # Ruta para añadir al carrito
-@app.route('/agregar-carrito/<int:libro_id>')
+@app.route('/agregar-carrito/<int:pelicula_id>')
 @login_required
-def agregar_carrito(libro_id):
+def agregar_carrito(pelicula_id):
     if 'carrito' not in session:
         session['carrito'] = []
     
+    # Verificar si la película ya está en el carrito
+    for item in session['carrito']:
+        if item['id'] == pelicula_id:
+            flash('Esta película ya está en tu carrito', 'info')
+            return redirect(url_for('catalogo'))
+    
+    # Obtener información de la película
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
-    cursor.execute("SELECT id, titulo, precio FROM libros WHERE id = ?", libro_id)
-    libro = cursor.fetchone()
+    cursor.execute("SELECT id, titulo, precio FROM peliculas WHERE id = ?", pelicula_id)
+    pelicula = cursor.fetchone()
     conn.close()
     
-    if libro:
-        item = {
-            'id': libro[0],
-            'titulo': libro[1],
-            'precio': float(libro[2])
-        }
-        session['carrito'].append(item)
+    if pelicula:
+        session['carrito'].append({
+            'id': pelicula[0],
+            'titulo': pelicula[1],
+            'precio': float(pelicula[2])
+        })
         session.modified = True
-        flash('Libro agregado al carrito', 'success')
+        flash('Película añadida al carrito', 'success')
     
     return redirect(url_for('catalogo'))
 
@@ -326,7 +341,7 @@ def eliminar_carrito(index):
     if 'carrito' in session and 0 <= index < len(session['carrito']):
         session['carrito'].pop(index)
         session.modified = True
-        flash('Libro eliminado del carrito', 'success')
+        flash('Película eliminada del carrito', 'success')
     
     return redirect(url_for('carrito'))
 
@@ -351,7 +366,7 @@ def comprar():
     
     # Crear los detalles de la venta
     for item in session['carrito']:
-        cursor.execute("INSERT INTO detalle_ventas (venta_id, libro_id, precio) VALUES (?, ?, ?)", 
+        cursor.execute("INSERT INTO detalle_ventas (venta_id, pelicula_id, precio) VALUES (?, ?, ?)", 
                       venta_id, item['id'], item['precio'])
     
     conn.commit()
@@ -381,57 +396,56 @@ def admin():
     
     return render_template('admin/index.html')
 
-# Administración de libros
-@app.route('/admin/libros')
+# Administración de películas
+@app.route('/admin/peliculas')
 @login_required
-def admin_libros():
+def admin_peliculas():
     if not current_user.is_admin:
-        flash('Acceso no autorizado', 'danger')
         return redirect(url_for('catalogo'))
     
     conn = pyodbc.connect(conn_str)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM libros ORDER BY titulo")
-    libros = cursor.fetchall()
+    cursor.execute("SELECT * FROM peliculas")
+    peliculas = cursor.fetchall()
     conn.close()
     
-    return render_template('admin/libros.html', libros=libros)
+    return render_template('admin/peliculas.html', peliculas=peliculas)
 
-@app.route('/admin/libros/agregar', methods=['GET', 'POST'])
+# Ruta para añadir película
+@app.route('/admin/peliculas/agregar', methods=['GET', 'POST'])
 @login_required
-def admin_agregar_libro():
+def admin_agregar_pelicula():
     if not current_user.is_admin:
-        flash('Acceso no autorizado', 'danger')
         return redirect(url_for('catalogo'))
     
     if request.method == 'POST':
         titulo = request.form['titulo']
         descripcion = request.form['descripcion']
-        autor = request.form['autor']
+        actores = request.form['actores']
         genero = request.form['genero']
-        anio_publicacion = request.form['anio_publicacion']
+        anio = request.form['anio']
         precio = request.form['precio']
         imagen_url = request.form['imagen_url']
         
         conn = pyodbc.connect(conn_str)
         cursor = conn.cursor()
         cursor.execute("""
-            INSERT INTO libros (titulo, descripcion, autor, genero, anio_publicacion, precio, imagen_url)
+            INSERT INTO peliculas (titulo, descripcion, actores, genero, anio, precio, imagen_url) 
             VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, titulo, descripcion, autor, genero, anio_publicacion, precio, imagen_url)
+        """, titulo, descripcion, actores, genero, anio, precio, imagen_url)
         conn.commit()
         conn.close()
         
-        flash('Libro agregado exitosamente', 'success')
-        return redirect(url_for('admin_libros'))
+        flash('Película agregada con éxito', 'success')
+        return redirect(url_for('admin_peliculas'))
     
-    return render_template('admin/agregar_libro.html')
+    return render_template('admin/agregar_pelicula.html')
 
-@app.route('/admin/libros/editar/<int:libro_id>', methods=['GET', 'POST'])
+# Ruta para editar película
+@app.route('/admin/peliculas/editar/<int:pelicula_id>', methods=['GET', 'POST'])
 @login_required
-def admin_editar_libro(libro_id):
+def admin_editar_pelicula(pelicula_id):
     if not current_user.is_admin:
-        flash('Acceso no autorizado', 'danger')
         return redirect(url_for('catalogo'))
     
     conn = pyodbc.connect(conn_str)
@@ -440,55 +454,55 @@ def admin_editar_libro(libro_id):
     if request.method == 'POST':
         titulo = request.form['titulo']
         descripcion = request.form['descripcion']
-        autor = request.form['autor']
+        actores = request.form['actores']
         genero = request.form['genero']
-        anio_publicacion = request.form['anio_publicacion']
+        anio = request.form['anio']
         precio = request.form['precio']
         imagen_url = request.form['imagen_url']
         
         cursor.execute("""
-            UPDATE libros 
-            SET titulo=?, descripcion=?, autor=?, genero=?, anio_publicacion=?, precio=?, imagen_url=?
-            WHERE id=?
-        """, titulo, descripcion, autor, genero, anio_publicacion, precio, imagen_url, libro_id)
+            UPDATE peliculas 
+            SET titulo = ?, descripcion = ?, actores = ?, genero = ?, anio = ?, precio = ?, imagen_url = ? 
+            WHERE id = ?
+        """, titulo, descripcion, actores, genero, anio, precio, imagen_url, pelicula_id)
         conn.commit()
-        flash('Libro actualizado exitosamente', 'success')
-        return redirect(url_for('admin_libros'))
+        
+        flash('Película actualizada con éxito', 'success')
+        return redirect(url_for('admin_peliculas'))
     
-    cursor.execute("SELECT * FROM libros WHERE id = ?", libro_id)
-    libro = cursor.fetchone()
+    cursor.execute("SELECT * FROM peliculas WHERE id = ?", pelicula_id)
+    pelicula = cursor.fetchone()
     conn.close()
     
-    if libro is None:
-        flash('Libro no encontrado', 'danger')
-        return redirect(url_for('admin_libros'))
+    if not pelicula:
+        flash('Película no encontrada', 'danger')
+        return redirect(url_for('admin_peliculas'))
     
-    return render_template('admin/editar_libro.html', libro=libro)
+    return render_template('admin/editar_pelicula.html', pelicula=pelicula)
 
-@app.route('/admin/libros/eliminar/<int:libro_id>')
+# Ruta para eliminar película
+@app.route('/admin/peliculas/eliminar/<int:pelicula_id>')
 @login_required
-def admin_eliminar_libro(libro_id):
+def admin_eliminar_pelicula(pelicula_id):
     if not current_user.is_admin:
-        flash('Acceso no autorizado', 'danger')
         return redirect(url_for('catalogo'))
     
-    try:
-        conn = pyodbc.connect(conn_str)
-        cursor = conn.cursor()
-        
-        # Primero eliminar los detalles de venta relacionados
-        cursor.execute("DELETE FROM detalle_ventas WHERE libro_id = ?", libro_id)
-        
-        # Luego eliminar el libro
-        cursor.execute("DELETE FROM libros WHERE id = ?", libro_id)
-        
-        conn.commit()
-        conn.close()
-        flash('Libro eliminado exitosamente', 'success')
-    except Exception as e:
-        flash('Error al eliminar el libro', 'danger')
+    conn = pyodbc.connect(conn_str)
+    cursor = conn.cursor()
     
-    return redirect(url_for('admin_libros'))
+    # Verificar si la película está en alguna venta
+    cursor.execute("SELECT COUNT(*) FROM detalle_ventas WHERE pelicula_id = ?", pelicula_id)
+    count = cursor.fetchone()[0]
+    
+    if count > 0:
+        flash('No se puede eliminar esta película porque está asociada a ventas', 'danger')
+    else:
+        cursor.execute("DELETE FROM peliculas WHERE id = ?", pelicula_id)
+        conn.commit()
+        flash('Película eliminada con éxito', 'success')
+    
+    conn.close()
+    return redirect(url_for('admin_peliculas'))
 
 # Administración de usuarios
 @app.route('/admin/usuarios')
